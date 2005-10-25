@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.1 2005/10/25 01:05:13 jcs Exp $
+# $Id: Makefile,v 1.2 2005/10/25 02:08:15 jcs Exp $
 # vim:ts=8
 
 PROG	= blueping
@@ -34,7 +34,7 @@ clean:
 
 release: all
 	@mkdir $(PROG)-${VERS}
-	@cp Makefile *.c $(PROG)-$(VERS)/
+	@cp Makefile README *.c $(PROG) $(PROG)-$(VERS)/
 	@tar -czf ../$(PROG)-$(VERS).tar.gz $(PROG)-$(VERS)
 	@rm -rf $(PROG)-$(VERS)/
 	@echo "made release ${VERS}"
