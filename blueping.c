@@ -1,5 +1,5 @@
 /*
- * $Id: blueping.c,v 1.2 2005/10/25 01:10:25 jcs Exp $
+ * $Id: blueping.c,v 1.3 2005/10/25 01:25:24 jcs Exp $
  *
  * blueping
  * a bluetooth monitoring utility
@@ -171,7 +171,7 @@ void
 pingloop()
 {
 	int status;
-	char logstr[50];
+	char logstr[1024];
 
 	status = IOBluetoothDeviceOpenConnection(device, NULL, NULL);
 	if (status == kIOReturnSuccess) {
