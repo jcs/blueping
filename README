@@ -1,13 +1,16 @@
 # vim:ts=8:et:tw=72
+# $Id: README,v 1.3 2005/10/25 14:24:15 jcs Exp $
 
 blueping
 ------------------------------------------------------------------------
-by joshua stein <jcs@jcs.org>
+by joshua stein <jcs@jcs.org>                            http://jcs.org/
 
 blueping is a simple command-line utility for mac os x (>=10.4) that
 "pings" a bluetooth device in a loop, optionally executing programs when
 the device is reachable (within range) and/or not reachable (out of
 range).
+
+blueping is released under a bsd license.
 
 the following options are available:
 
