@@ -1,5 +1,5 @@
 /*
- * $Id: blueping.c,v 1.5 2005/10/25 01:40:13 jcs Exp $
+ * $Id: blueping.c,v 1.6 2005/10/25 14:23:35 jcs Exp $
  *
  * blueping
  * a bluetooth monitoring utility
@@ -40,6 +40,7 @@
 
 void bail(int);
 void dolog(char *);
+void launchapp(char *);
 void pingloop(void);
 void usage(void);
 
@@ -59,11 +60,11 @@ main(int argc, char *argv[])
 {
 	BluetoothDeviceAddress device_address;
 	CFStringRef t;
-	char macbuf[255];
-	u_char devname[50];
-	char logstr[255];
+	char macbuf[255], logstr[255];
 	char *inval = NULL, *self = NULL, *p = NULL;
+	u_char devname[50];
 	int ch;
+
 	CFRunLoopTimerContext context = {0, self, NULL, NULL, NULL};
 
 	bzero(enterprog, sizeof(enterprog));
@@ -106,7 +107,7 @@ main(int argc, char *argv[])
 	t = CFStringCreateWithCString(NULL, macbuf, kCFStringEncodingASCII);
 	int status = IOBluetoothNSStringToDeviceAddress(t, &device_address);
 	if (status != kIOReturnSuccess) {
-		fprintf(stderr, "%s: error creating device address: %s",
+		fprintf(stderr, "%s: error creating device address: %s\n",
 			__progname, macbuf);
 		exit(1);
 	}
@@ -171,9 +172,7 @@ void
 pingloop()
 {
 	int status;
-	char *argp[] = {"sh", "-c", NULL, NULL};
 	char logstr[512];
-	pid_t pid;
 
 	status = IOBluetoothDeviceOpenConnection(device, NULL, NULL);
 	if (status == kIOReturnSuccess) {
@@ -190,14 +189,8 @@ pingloop()
 			dolog(logstr);
 		}
 
-		if (connected == 0 && strlen(enterprog)) {
-			argp[2] = enterprog;
-			pid = fork();
-			if (pid == 0) {
-				execv("/bin/sh", argp);
-				_exit(1);
-			}
-		}
+		if (connected == 0 && strlen(enterprog))
+			launchapp(enterprog);
 
 		connected = 1;
 	} else {
@@ -213,14 +206,8 @@ pingloop()
 			dolog(logstr);
 		}
 
-		if (connected == 1 && strlen(exitprog)) {
-			argp[2] = exitprog;
-			pid = fork();
-			if (pid == 0) {
-				execv("/bin/sh", argp);
-				_exit(1);
-			}
-		}
+		if (connected == 1 && strlen(exitprog))
+			launchapp(exitprog);
 
 		connected = 0;
 	}
@@ -234,5 +221,19 @@ pingloop()
 			(connected == 1 ? "" : "not "), pollint,
 			(pollint == 1 ? "" : "s"));
 		dolog(logstr);
+	}
+}
+
+void
+launchapp(char *progname)
+{
+	char *argp[] = {"sh", "-c", NULL, NULL};
+	pid_t pid;
+
+	argp[2] = progname;
+	pid = fork();
+	if (pid == 0) {
+		execv("/bin/sh", argp);
+		_exit(1);
 	}
 }
