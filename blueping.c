@@ -1,5 +1,5 @@
 /*
- * $Id: blueping.c,v 1.4 2005/10/25 01:26:03 jcs Exp $
+ * $Id: blueping.c,v 1.5 2005/10/25 01:40:13 jcs Exp $
  *
  * blueping
  * a bluetooth monitoring utility
@@ -171,7 +171,9 @@ void
 pingloop()
 {
 	int status;
+	char *argp[] = {"sh", "-c", NULL, NULL};
 	char logstr[512];
+	pid_t pid;
 
 	status = IOBluetoothDeviceOpenConnection(device, NULL, NULL);
 	if (status == kIOReturnSuccess) {
@@ -188,8 +190,14 @@ pingloop()
 			dolog(logstr);
 		}
 
-		if (connected == 0 && strlen(enterprog))
-			system(enterprog);
+		if (connected == 0 && strlen(enterprog)) {
+			argp[2] = enterprog;
+			pid = fork();
+			if (pid == 0) {
+				execv("/bin/sh", argp);
+				_exit(1);
+			}
+		}
 
 		connected = 1;
 	} else {
@@ -205,8 +213,14 @@ pingloop()
 			dolog(logstr);
 		}
 
-		if (connected == 1 && strlen(exitprog))
-			system(exitprog);
+		if (connected == 1 && strlen(exitprog)) {
+			argp[2] = exitprog;
+			pid = fork();
+			if (pid == 0) {
+				execv("/bin/sh", argp);
+				_exit(1);
+			}
+		}
 
 		connected = 0;
 	}
