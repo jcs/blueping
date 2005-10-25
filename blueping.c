@@ -1,5 +1,5 @@
 /*
- * $Id: blueping.c,v 1.1 2005/10/25 01:05:13 jcs Exp $
+ * $Id: blueping.c,v 1.2 2005/10/25 01:10:25 jcs Exp $
  *
  * blueping
  * a bluetooth monitoring utility
@@ -45,7 +45,7 @@ void usage(void);
 
 IOBluetoothDeviceRef device;
 CFRunLoopTimerRef looptimer;
-char enterprog[1024], leaveprog[1024];
+char enterprog[1024], exitprog[1024];
 int connected = -1;
 int verbose = 0;
 
@@ -67,7 +67,7 @@ main(int argc, char *argv[])
 	CFRunLoopTimerContext context = {0, self, NULL, NULL, NULL};
 
 	bzero(enterprog, sizeof(enterprog));
-	bzero(leaveprog, sizeof(leaveprog));
+	bzero(exitprog, sizeof(exitprog));
 	bzero(macbuf, sizeof(macbuf));
 
 	while ((ch = getopt(argc, argv, "d:e:i:vx:")) != -1) {
@@ -87,7 +87,7 @@ main(int argc, char *argv[])
 			verbose++;
 			break;
 		case 'x':
-			strncpy(leaveprog, optarg, sizeof(leaveprog));
+			strncpy(exitprog, optarg, sizeof(exitprog));
 			break;
 		default:
 			usage();
@@ -147,8 +147,8 @@ main(int argc, char *argv[])
 void
 usage()
 {
-	fprintf(stderr, "usage: %s -d macaddr [-i pollint] [-v]\n",
-		__progname);
+	fprintf(stderr, "usage: %s -d macaddr [-e enterprog] [-i pollint] [-v]"
+		" [-x exitprog]\n", __progname);
 	exit(1);
 }
 
@@ -197,16 +197,16 @@ pingloop()
 			bzero(logstr, sizeof(logstr));
 			snprintf(logstr, sizeof(logstr), "device left range");
 
-			if (strlen(leaveprog))
+			if (strlen(exitprog))
 				snprintf(logstr, sizeof(logstr),
 					"%s, executing \"%s\"", logstr,
-					leaveprog);
+					exitprog);
 
 			dolog(logstr);
 		}
 
-		if (connected == 1 && strlen(leaveprog))
-			system(leaveprog);
+		if (connected == 1 && strlen(exitprog))
+			system(exitprog);
 
 		connected = 0;
 	}
