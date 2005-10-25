@@ -37,3 +37,9 @@ examples of usage:
     when i walk away carrying my cell phone, lock the screen:
 
         blueping -d 00-14-9a-d8-10-18 -v -x "/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine"
+
+    when my cell phone comes into range, run a helper script that checks
+    the last time that iSync completed and if it has been over a certain
+    amount of days, launch iSync and auto-synchronize:
+
+        blueping -d 00-14-9a-d8-10-18 -v -e "/Users/jcs/bin/blueping-isync"
