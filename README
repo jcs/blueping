@@ -1,0 +1,39 @@
+# vim:ts=8:et:tw=72
+
+blueping
+------------------------------------------------------------------------
+by joshua stein <jcs@jcs.org>
+
+blueping is a simple command-line utility for mac os x (>=10.4) that
+"pings" a bluetooth device in a loop, optionally executing programs when
+the device is reachable (within range) and/or not reachable (out of
+range).
+
+the following options are available:
+
+    -d MAC  (required) the mac address of the device, in the format
+            01-23-45-67-89-01 or 012345678901.  can be found by opening
+            the system bluetooth preferences and locating the "device
+            address" of the device.
+
+            the device must be paired and configured prior to using it
+            with blueping.
+
+    -e PROG (optional) a string to execute when the device enters range
+            and is reachable.  passed directly to sh(1).
+
+    -i NUM  (optional) the interval, in seconds, to ping the device.
+            the default is 15 seconds.  not recommended to be under 5
+            seconds.
+
+    -v      (optional) be verbose and log to STDOUT.  specify this
+            option twice to be even more verbose.
+
+    -x PROG (optional) a string to execute when the device exits range
+            and is no longer reachable.  passed directly to sh(1).
+
+examples of usage:
+
+    when i walk away carrying my cell phone, lock the screen:
+
+        blueping -d 00-14-9a-d8-10-18 -v -x "/System/Library/Frameworks/ScreenSaver.framework/Resources/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine"
