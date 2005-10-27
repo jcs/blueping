@@ -1,5 +1,5 @@
 /*
- * $Id: blueping.c,v 1.6 2005/10/25 14:23:35 jcs Exp $
+ * $Id: blueping.c,v 1.7 2005/10/27 15:31:27 jcs Exp $
  *
  * blueping
  * a bluetooth monitoring utility
@@ -36,12 +36,14 @@
 #include <IOBluetooth/IOBluetoothUserLib.h>
 #include <IOBluetooth/IOBluetoothUtilities.h>
 #include <err.h>
+#include <signal.h>
 #include <time.h>
 
 void bail(int);
 void dolog(char *);
 void launchapp(char *);
 void pingloop(void);
+void sig_handler(int);
 void usage(void);
 
 IOBluetoothDeviceRef device;
@@ -102,6 +104,9 @@ main(int argc, char *argv[])
 		fprintf(stderr, "%s: no bluetooth available\n", __progname);
 		exit(1);
 	}
+
+	signal(SIGCHLD, sig_handler);
+	signal(SIGINT, sig_handler);
 
 	/* convert the mac address and establish our object */
 	t = CFStringCreateWithCString(NULL, macbuf, kCFStringEncodingASCII);
@@ -235,5 +240,22 @@ launchapp(char *progname)
 	if (pid == 0) {
 		execv("/bin/sh", argp);
 		_exit(1);
+	}
+}
+
+void
+sig_handler(int sig)
+{
+	switch (sig) {
+	case SIGCHLD:
+		printf("got sigchld\n");
+		wait(NULL);
+		break;
+	case SIGINT:
+		printf("\nshutting down\n");
+		IOBluetoothDeviceCloseConnection(device);
+		IOBluetoothObjectRelease(device);
+		_exit(0);
+		break;
 	}
 }
