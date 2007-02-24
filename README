@@ -1,5 +1,5 @@
 # vim:ts=4:et:tw=72
-# $Id: README,v 1.4 2005/10/25 16:21:27 jcs Exp $
+# $Id: README,v 1.5 2007/02/24 22:54:42 jcs Exp $
 
 blueping
 ------------------------------------------------------------------------
@@ -51,5 +51,5 @@ examples of usage:
     it when i return:
 
         blueping -d 00-14-9a-d8-10-18 -v \
-            -e "osaosascript -e 'tell application "'"iTunes"'" to play'" \
-            -x "osaosascript -e 'tell application "'"iTunes"'" to pause'"
+            -e "osascript -e 'tell application "'"iTunes"'" to play'" \
+            -x "osascript -e 'tell application "'"iTunes"'" to pause'"
